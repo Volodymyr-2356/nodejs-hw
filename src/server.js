@@ -1,24 +1,35 @@
 import express from 'express';
 import 'dotenv/config';
+import cors from 'cors';
+import pino from 'pino-http';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  console.log('Middleware A');
-  next();
-});
+//Middleware для парсингу JSON
+app.use(express.json());
+//CORS (Cross-Origin Resource Sharing) —
+//  механізм безпеки, який дозволяє браузеру робити запити з одного домену до іншого.
+app.use(cors());
 
-app.use((req, res, next) => {
-  console.log('Middleware B');
-  console.log('Middleware C');
-  next();
-});
+//Логування запитів
+app.use(
+  pino({
+    level: 'info',
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'HH:MM:ss',
+        ignore: 'pid,hostname',
+        messageFormat:
+          '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
+        hideObject: true,
+      },
+    },
+  }),
+);
 
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Welcome to the server!' });
-});
 //Маршрут всіх нотаток
 app.get('/notes', (req, res) => {
   res.status(200).json({ message: 'Retrieved all notes' });
@@ -29,18 +40,23 @@ app.get('/notes/:noteId', (req, res) => {
   res.status(200).json({ message: 'Retrieved note with ID: id_param' });
 });
 
-app.get('/error', (req, res) => {
-  throw new Error('This is a test error');
+app.get('/test-error', () => {
+  throw new Error('Simulated server error');
 });
 
-// Middlware Обробка помилки
+// Middleware для неіснуючих маршрутів
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+// Middleware Обробка помилок
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   res.status(500).json({
     message: 'Internal Server Error',
-    error: err.message,
   });
 });
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
