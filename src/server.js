@@ -37,7 +37,9 @@ app.get('/notes', (req, res) => {
 
 //Маршрут  для нотатки за ідентифікатором
 app.get('/notes/:noteId', (req, res) => {
-  res.status(200).json({ message: 'Retrieved note with ID: id_param' });
+  res
+    .status(200)
+    .json({ message: 'Retrieved note with ID: ' + req.params.noteId });
 });
 
 app.get('/test-error', () => {
