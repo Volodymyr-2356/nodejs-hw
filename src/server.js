@@ -19,9 +19,14 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to the server!' });
 });
-
+//Маршрут всіх нотаток
 app.get('/notes', (req, res) => {
-  res.status(200).json({ status: 'OK' });
+  res.status(200).json({ message: 'Retrieved all notes' });
+});
+
+//Маршрут  для нотатки за ідентифікатором
+app.get('/notes/:noteId', (req, res) => {
+  res.status(200).json({ message: 'Retrieved note with ID: id_param' });
 });
 
 app.get('/error', (req, res) => {
