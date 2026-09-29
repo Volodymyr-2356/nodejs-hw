@@ -1,48 +1,32 @@
 import express from 'express';
 import 'dotenv/config';
+import cors from 'cors';
+
 import { connectMongoDB } from './db/connectMongoDB.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHAndler } from './middleware/errorHandler.js';
+import notesRoutes from './routes/notesRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  console.log('Middleware A');
-  next();
-});
+//Middleware для парсингу JSON
+app.use(express.json());
+//CORS (Cross-Origin Resource Sharing) —
+//  механізм безпеки, який дозволяє браузеру робити запити з одного домену до іншого.
+app.use(cors());
 
-app.use((req, res, next) => {
-  console.log('Middleware B');
-  console.log('Middleware C');
-  next();
-});
+//Логування запитів
+app.use(logger);
+//Маршрути нотаток
+app.use(notesRoutes);
 
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Welcome to the server!' });
-});
-//Маршрут всіх нотаток
-app.get('/notes', (req, res) => {
-  res.status(200).json({ message: 'Retrieved all notes' });
-});
+// Middleware для неіснуючих маршрутів
+app.use(notFoundHandler);
 
-//Маршрут  для нотатки за ідентифікатором
-app.get('/notes/:noteId', (req, res) => {
-  res.status(200).json({ message: 'Retrieved note with ID: id_param' });
-});
-
-app.get('/error', (req, res) => {
-  throw new Error('This is a test error');
-});
-
-// Middlware Обробка помилки
-app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  res.status(500).json({
-    message: 'Internal Server Error',
-    error: err.message,
-  });
-});
-
+// Middleware Обробка помилок
+app.use(errorHAndler);
 await connectMongoDB();
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
