@@ -8,6 +8,7 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -21,6 +22,7 @@ app.use(cors());
 //Логування запитів
 app.use(logger);
 //Маршрути нотаток
+app.use(authRoutes);
 app.use(notesRoutes);
 
 // Middleware для неіснуючих маршрутів
