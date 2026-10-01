@@ -9,11 +9,13 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRoutes from './routes/notesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 //Middleware для парсингу JSON
+app.use(cookieParser());
 app.use(express.json());
 //CORS (Cross-Origin Resource Sharing) —
 //  механізм безпеки, який дозволяє браузеру робити запити з одного домену до іншого.
