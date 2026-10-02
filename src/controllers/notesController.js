@@ -20,13 +20,13 @@ export const getAllNotes = async (req, res) => {
     });
   }
 
-  const [totalNote, notes] = await Promise.all([
+  const [totalNotes, notes] = await Promise.all([
     notesQuery.clone().countDocuments(),
     notesQuery.skip(skip).limit(perPage),
   ]);
-  const totalPages = Math.ceil(totalNote / perPage);
+  const totalPages = Math.ceil(totalNotes / perPage);
 
-  res.status(200).json({ page, perPage, totalNote, totalPages, notes });
+  res.status(200).json({ page, perPage, totalNotes, totalPages, notes });
 };
 
 //Пошук нотатки за ідентифікатором
