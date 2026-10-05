@@ -142,7 +142,7 @@ export const requestResetEmail = async (req, res) => {
 
   // Та сама "нейтральна" відповідь
   res.status(200).json({
-    message: 'If this email exists, a reset link has been sent',
+    message: 'Password reset email sent successfully',
   });
 };
 
@@ -170,6 +170,6 @@ export const resetPassword = async (req, res) => {
 
   // 5. Повертаємо успішну відповідь
   res.status(200).json({
-    message: 'Password reset successfully. Please log in again.',
+    message: 'Password reset successfully',
   });
 };
